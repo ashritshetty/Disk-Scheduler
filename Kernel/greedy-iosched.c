@@ -33,7 +33,7 @@ static int greedy_dispatch(struct request_queue *q, int force)
 		rq = list_entry(gd->downhill.next, struct request, queuelist);
 	}
 
-	if (list_empty(&gd->downhill)) {
+	else if (list_empty(&gd->downhill)) {
 		rq = list_entry(gd->uphill.next, struct request, queuelist);
 	}
 
