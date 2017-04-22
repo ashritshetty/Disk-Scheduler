@@ -5,7 +5,7 @@
 #include <linux/slab.h>
 #include <linux/init.h>
 
-sector_t curr_head;
+sector_t curr_head = 0;
 
 struct greedy_data {
 	struct list_head uphill;
