@@ -45,14 +45,14 @@ static int greedy_dispatch(struct request_queue *q, int force)
 		rq_downhill = list_entry(gd->downhill.next, struct request, queuelist);
 
 		if (blk_rq_pos(rq_uphill) < curr_head)
-			up_diff = curr_head - rq_uphill;
+			up_diff = curr_head - blk_rq_pos(rq_uphill);
 		else
-			up_diff = rq_uphill - curr_head;
+			up_diff = blk_rq_pos(rq_uphill) - curr_head;
 
 		if (blk_rq_pos(rq_downhill) < curr_head)
-			down_diff = curr_head - rq_downhill;
+			down_diff = curr_head - blk_rq_pos(rq_downhill);
 		else
-			down_diff = rq_downhill - curr_head;
+			down_diff = blk_rq_pos(rq_downhill) - curr_head;
 
 		if (up_diff < down_diff){
 			rq = rq_uphill;
