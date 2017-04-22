@@ -75,28 +75,30 @@ static void greedy_add_request(struct request_queue *q, struct request *rq)
 	struct greedy_data *gd = q->elevator->elevator_data;
 	struct list_head *pos;
 	struct request *ele;
-	sector_t req_head = blk_rq_pos(rq);
+	sector_t req_pos = blk_rq_pos(rq);
 	sector_t ele_head;
 
-	if(req_head < curr_head){
+	if(req_pos < curr_head){
 		list_for_each(pos, &gd->downhill){
 			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
-			if(ele_head < req_head){
-				break;
+			if(ele_head < req_pos){
+                list_add(&rq->queuelist, pos->prev);
+                return;
 			}
 		}
-		list_add(&rq->queuelist, pos);
+        list_add_tail(&rq->queuelist, &gd->downhill);
 	}
 	else{
 		list_for_each(pos, &gd->uphill){
 			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
-			if(ele_head > req_head){
-				break;
+			if(ele_head > req_pos){
+                list_add(&rq->queuelist, pos->prev);
+                return;
 			}
 		}
-		list_add(&rq->queuelist, pos);
+        list_add_tail(&rq->queuelist, &gd->uphill);
 	}
 }
 
