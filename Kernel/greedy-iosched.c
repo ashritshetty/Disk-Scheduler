@@ -25,6 +25,9 @@ static int greedy_dispatch(struct request_queue *q, int force)
 	struct request *rq_downhill;
 	struct request *rq;
 
+	sector_t up_diff;
+	sector_t down_diff;
+
 	if ((list_empty(&gd->uphill)) && (list_empty(&gd->downhill))) {
 		return 0;
 	}
@@ -40,7 +43,18 @@ static int greedy_dispatch(struct request_queue *q, int force)
 	else {
 		rq_uphill = list_entry(gd->uphill.next, struct request, queuelist);
 		rq_downhill = list_entry(gd->downhill.next, struct request, queuelist);
-		if ((blk_rq_pos(rq_uphill)-curr_head) < (curr_head-blk_rq_pos(rq_downhill))){
+
+		if (blk_rq_pos(rq_uphill) < curr_head)
+			up_diff = curr_head - rq_uphill;
+		else
+			up_diff = rq_uphill - curr_head;
+
+		if (blk_rq_pos(rq_downhill) < curr_head)
+			down_diff = curr_head - rq_downhill;
+		else
+			down_diff = rq_downhill - curr_head;
+
+		if (up_diff < down_diff){
 			rq = rq_uphill;
 		}
 		else {
