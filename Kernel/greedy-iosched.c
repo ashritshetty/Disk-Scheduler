@@ -24,7 +24,6 @@ static int greedy_dispatch(struct request_queue *q, int force)
 	struct request *rq_uphill;
 	struct request *rq_downhill;
 	struct request *rq;
-	sector_t req_head = blk_rq_pos(rq);
 
 	if ((list_empty(&gd->uphill)) && (list_empty(&gd->downhill))) {
 		return 0;
@@ -67,7 +66,7 @@ static void greedy_add_request(struct request_queue *q, struct request *rq)
 
 	if(req_head < curr_head){
 		list_for_each(pos, &gd->downhill){
-			ele = list_entry(pos, struct request, queuelist)
+			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
 			if(ele_head < req_head){
 				break;
@@ -77,7 +76,7 @@ static void greedy_add_request(struct request_queue *q, struct request *rq)
 	}
 	else{
 		list_for_each(pos, &gd->uphill){
-			ele = list_entry(pos, struct request, queuelist)
+			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
 			if(ele_head > req_head){
 				break;
@@ -124,7 +123,7 @@ static int greedy_init_queue(struct request_queue *q, struct elevator_type *e)
 	eq->elevator_data = gd;
 
 	INIT_LIST_HEAD(&gd->uphill);
-	INIT_LIST_HEAD(&dg->downhill);
+	INIT_LIST_HEAD(&gd->downhill);
 
 	spin_lock_irq(q->queue_lock);
 	q->elevator = eq;
