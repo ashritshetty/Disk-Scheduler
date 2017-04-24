@@ -44,6 +44,7 @@ static int greedy_dispatch(struct request_queue *q, int force)
 		rq_uphill = list_entry(gd->uphill.next, struct request, queuelist);
 		rq_downhill = list_entry(gd->downhill.next, struct request, queuelist);
 
+		/*
 		if (blk_rq_pos(rq_uphill) < curr_head)
 			up_diff = curr_head - blk_rq_pos(rq_uphill);
 		else
@@ -53,6 +54,10 @@ static int greedy_dispatch(struct request_queue *q, int force)
 			down_diff = curr_head - blk_rq_pos(rq_downhill);
 		else
 			down_diff = blk_rq_pos(rq_downhill) - curr_head;
+		*/
+
+		up_diff = curr_head - blk_rq_pos(rq_uphill);
+		down_diff = blk_rq_pos(rq_downhill) - curr_head;
 
 		if (up_diff < down_diff){
 			rq = rq_uphill;
@@ -83,22 +88,22 @@ static void greedy_add_request(struct request_queue *q, struct request *rq)
 			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
 			if(ele_head < req_pos){
-                list_add(&rq->queuelist, pos->prev);
-                return;
+                		list_add(&rq->queuelist, pos->prev);
+                		return;
 			}
 		}
-        list_add_tail(&rq->queuelist, &gd->downhill);
+        	list_add_tail(&rq->queuelist, &gd->downhill);
 	}
 	else{
 		list_for_each(pos, &gd->uphill){
 			ele = list_entry(pos, struct request, queuelist);
 			ele_head = blk_rq_pos(ele);
 			if(ele_head > req_pos){
-                list_add(&rq->queuelist, pos->prev);
-                return;
+                		list_add(&rq->queuelist, pos->prev);
+                		return;
 			}
 		}
-        list_add_tail(&rq->queuelist, &gd->uphill);
+        	list_add_tail(&rq->queuelist, &gd->uphill);
 	}
 }
 
