@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -e
 
 #start_time=$(date +%s)
 
@@ -17,6 +17,6 @@ do
     (echo $BASHPID > output/$i.pid
     while true
         do
-        randread  ${array[$i]} $i$RANDOM ${fileprob[$i]} ${dirfactor[$i]} 2>&1 >> output/out.$i
+        randread  ${array[$i]} $i$RANDOM ${fileprob[$i]} ${dirfactor[$i]} 2>/dev/null >/dev/null
     done)&
 done
